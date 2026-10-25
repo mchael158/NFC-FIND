@@ -1,0 +1,37 @@
+[package]
+name = "nfc-find"
+version = "0.2.0"
+edition = "2021"
+authors = ["Authorized Pentest Operator"]
+description = "NFC relay prototype (portable core + desktop binary)"
+
+[lib]
+name = "nfc_find"
+path = "src/lib.rs"
+
+[[bin]]
+name = "nfc-relay"
+path = "src/main.rs"
+
+[dependencies]
+serde = { version = "1", default-features = false, features = ["derive", "alloc"] }
+serde_json = { version = "1", default-features = false, features = ["alloc"] }
+
+# Desktop-only
+clap = { version = "4", features = ["derive"], optional = true }
+hex = { version = "0.4", optional = true }
+rand = { version = "0.8", optional = true }
+pcsc = { version = "2", optional = true }
+anyhow = { version = "1", optional = true }
+tokio = { version = "1", optional = true, features = ["net", "rt-multi-thread", "macros", "time", "sync", "io-util", "signal"] }
+tracing = { version = "0.1", optional = true }
+tracing-subscriber = { version = "0.3", optional = true, features = ["fmt"] }
+[features]
+default = ["std", "cli"]
+std = ["serde/std", "serde_json/std", "alloc"]
+alloc = []
+cli = ["std", "dep:clap", "dep:hex", "dep:rand", "dep:anyhow", "dep:tokio", "dep:tracing", "dep:tracing-subscriber"]
+pcsc-backend = ["std", "dep:pcsc"]
+
+[build-dependencies]
+# none required; assembly is optional and detected at build time
